@@ -1,0 +1,106 @@
+/*
+CREACIÓN DE DATA WAREHOUSE
+TAREA 1 MODULO 3
+
+PRESENTADO POR JOSE ESTEBAN DURAN CRUZ, DC18024.
+*/
+
+create database DWTailspinToys
+go
+
+use DWTailspinToys
+go
+
+-- creacion de dimension dimProducto
+
+CREATE TABLE [dbo].[DimProducto] (
+    [ProductKey] INT IDENTITY(1,1) NOT NULL,
+    [ProductID] INT NOT NULL,
+    [ProductSKU] NVARCHAR(50) NOT NULL,
+    [ProductName] NVARCHAR(50) NOT NULL,
+    [ProductCategory] NVARCHAR(50) NOT NULL,
+    [ItemGroup] NVARCHAR(50) NOT NULL,
+    [KitType] NCHAR(3) NOT NULL,
+    [Channels] TINYINT NOT NULL,
+    [Demographic] NVARCHAR(50) NOT NULL,
+    [RetailPrice] MONEY NOT NULL,
+    [StartDate] DATETIME NOT NULL,
+    [EndDate] DATETIME NULL,
+    [IsCurrent] BIT NOT NULL,
+    CONSTRAINT [PK_DimProducto] PRIMARY KEY CLUSTERED ([ProductKey] ASC)
+);
+
+-- creacion de dimension dimTiempo
+
+CREATE TABLE [dbo].[DimTiempo] (
+    [FechaKey] INT NOT NULL,
+    [FechaCompleta] DATE NOT NULL,
+    [DiaDeLaSemana] NVARCHAR(10) NOT NULL,
+    [NombreDelMes] NVARCHAR(20) NOT NULL,
+    [Trimestre] NVARCHAR(2) NOT NULL,
+    [Anio] INT NOT NULL,
+    CONSTRAINT [PK_DimTiempo] PRIMARY KEY CLUSTERED ([FechaKey] ASC)
+);
+
+-- creacion de dimension dimEstado
+
+CREATE TABLE [dbo].[DimEstado] (
+    [StateKey] INT IDENTITY(1,1) NOT NULL,
+    [StateID] INT NOT NULL,
+    [StateCode] NVARCHAR(2) NOT NULL,
+    [StateName] NVARCHAR(50) NOT NULL,
+    [TimeZone] NVARCHAR(10) NOT NULL,
+    [RegionID] INT NULL,
+    [StartDate] DATETIME NOT NULL,
+    [EndDate] DATETIME NULL,
+    [IsCurrent] BIT NOT NULL,
+    CONSTRAINT [PK_DimEstado] PRIMARY KEY CLUSTERED ([StateKey] ASC)
+);
+
+-- creacion de dimension facVentas
+
+CREATE TABLE [dbo].[facVentas] (
+    [OrderNumber] NCHAR(10) NOT NULL,
+    [OrderDateKey] INT NOT NULL,
+    [ShipDateKey] INT NULL,
+    [ProductKey] INT NOT NULL,
+    [StateKey] INT NOT NULL,
+    [Quantity] INT NOT NULL,
+    [UnitPrice] DECIMAL(9, 2) NOT NULL,
+    [DiscountAmount] DECIMAL(9, 2) NOT NULL,
+    [PromotionCode] NVARCHAR(20) NULL,
+    [VentaNeta] AS (([Quantity] * [UnitPrice]) - [DiscountAmount]),
+    CONSTRAINT [PK_facVentas] PRIMARY KEY CLUSTERED ([OrderNumber] ASC),
+    CONSTRAINT [FK_facVentas_DimTiempo_Order] FOREIGN KEY ([OrderDateKey]) REFERENCES [dbo].[DimTiempo]([FechaKey]),
+    CONSTRAINT [FK_facVentas_DimTiempo_Ship] FOREIGN KEY ([ShipDateKey]) REFERENCES [dbo].[DimTiempo]([FechaKey]),
+    CONSTRAINT [FK_facVentas_DimProducto] FOREIGN KEY ([ProductKey]) REFERENCES [dbo].[DimProducto]([ProductKey]),
+    CONSTRAINT [FK_facVentas_DimEstado] FOREIGN KEY ([StateKey]) REFERENCES [dbo].[DimEstado]([StateKey])
+);
+
+
+
+-- Script para poblar la tabla DimTiempo con 5 años de fechas (2018-2022)
+
+DECLARE @StartDate DATE = '2018-01-01';
+DECLARE @EndDate DATE = '2022-12-31';
+
+WHILE @StartDate <= @EndDate
+BEGIN
+    INSERT INTO [dbo].[DimTiempo] (
+        [FechaKey],
+        [FechaCompleta],
+        [DiaDeLaSemana],
+        [NombreDelMes],
+        [Trimestre],
+        [Anio]
+    )
+    SELECT
+        CONVERT(INT, CONVERT(NVARCHAR(8), @StartDate, 112)), -- FechaKey: YYYYMMDD
+        @StartDate,                                          -- FechaCompleta
+        DATENAME(DW, @StartDate),                            -- DiaDeLaSemana
+        DATENAME(MONTH, @StartDate),                         -- NombreDelMes
+        'Q' + CONVERT(NVARCHAR(1), DATEPART(QUARTER, @StartDate)), -- Trimestre
+        YEAR(@StartDate);                                    -- Anio
+
+    SET @StartDate = DATEADD(DAY, 1, @StartDate);
+END;

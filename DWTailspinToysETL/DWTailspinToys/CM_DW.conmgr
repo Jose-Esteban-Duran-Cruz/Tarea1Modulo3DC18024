@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="localhost.DWTailspinToys.sa"
+  DTS:DTSID="{FD4E8A76-52AB-41BA-9535-D8CD9B2CDB2D}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectRetryCount="1"
+      DTS:ConnectRetryInterval="5"
+      DTS:ConnectionString="Data Source=DESKTOP-E1SBDRR\SQLEXPRESS;User ID=sa;Initial Catalog=DWTailspinToys;Provider=SQLNCLI11.1;Auto Translate=False;Application Name=SSIS-DWTailspinToys-{FD4E8A76-52AB-41BA-9535-D8CD9B2CDB2D}localhost.DWTailspinToys.sa;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAInLi5/JNt0usAVR57vb+ogAAAAACAAAAAAAQZgAAAAEAACAAAAAAUP/6gvq3RO1L6iPGqfJDgA13WShqKlUiJmhk2ftuoQAAAAAOgAAAAAIAACAAAAAd9OqRIoqwhYVFc9FfEm2QBNSQ+BA0SRzeiNu17QExqIAAAACNMGKeRQekI2TMmfOoiNSGSpFwCw7gf0jI5esnqVOVRJ5wZF3qDufCdRCY/ufcLRIuO6tMYLwBTx6vtKoO4GnJCMpmfPjJ2WlIjacj64e+JuFbI4CzJ7Yl9wZ+NyHTP3CFoHBMw8Oucx/wTwmzNGrL2NImo0o+AFY/HnwNUEPcEkAAAACkCdHm9wqZXNWVxK4edQH7KvtWbW2cAbC78I4sX/FNKlxQ3A4iCqCOKQVDG2P9Xa6tMZC+xNZHkGw4kbItPZaS</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>
