@@ -104,3 +104,16 @@ BEGIN
 
     SET @StartDate = DATEADD(DAY, 1, @StartDate);
 END;
+
+
+
+-- PARA BASE DE DATOS ORIGEN (CONVERSION DE DATOS NULOS A NO DEFINIDOS)
+
+UPDATE dbo.Sales
+SET PromotionCode = 'no definido'
+WHERE PromotionCode IS NULL;
+
+
+UPDATE dbo.Sales
+SET ShipDate = '1900-01-01' --valor fecha no disponible
+WHERE ShipDate IS NULL;
